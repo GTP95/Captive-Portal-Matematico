@@ -15,7 +15,22 @@ derivata();
 int punteggioTotale = punteggioRadiceQuadrata+punteggioLogaritmo+punteggioFattoriale+punteggioPotenza+punteggioDerivata;
   Serial.println("Punteggio totale: "+punteggioTotale);
   if(punteggioTotale>=3){
-    webServer.send(200, "text/html", testSuperatoHTML);
+    //webServer.send(200, "text/html", testSuperatoHTML);
+    if (SPIFFS.exists("/test_superato.html")){
+      File f = SPIFFS.open("/test_superato.html", "r");
+      webServer.streamFile(f, "text/html");
+          f.close();
+  }
+
+  else{
+    Serial.println("File test_superato.html not found, falling back to default page");
+    testSuperatoHTML="<!DOCTYPE html><html><head><title>Disfida matematica</title></head><body><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
+                      "<h1>Complimenti, hai superato il test!</h1>"
+                      "<p>Tuttavia, almeno per il momento, questa rete non è in grado di fornire un servizio di connettività ad Internet. In futuro potrei esplorare la possibilità di un"
+                      "tunnel DNS, ma per ora ti dovrai accontentare della gloria e dell'onore di aver superato questo test. Complimenti ancora!</p></body></html>";
+
+
+  }
   }
   else webServer.send(200, "text/html", testFallitoHTML);
 }
