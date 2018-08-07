@@ -2,7 +2,6 @@
 #include <ESP8266WebServer.h>
 
 int punteggioRadiceQuadrata, punteggioLogaritmo, punteggioFattoriale, punteggioPotenza, punteggioDerivata;  //qui non verrebbero inizializzati a 0
-
 void calcola_punteggio() {
 punteggioRadiceQuadrata=0, punteggioLogaritmo=0, punteggioFattoriale=0, punteggioPotenza=0, punteggioDerivata=0;
   
@@ -15,24 +14,30 @@ derivata();
 int punteggioTotale = punteggioRadiceQuadrata+punteggioLogaritmo+punteggioFattoriale+punteggioPotenza+punteggioDerivata;
   Serial.println("Punteggio totale: "+punteggioTotale);
   if(punteggioTotale>=3){
-    //webServer.send(200, "text/html", testSuperatoHTML);
+    //
     if (SPIFFS.exists("/test_superato.html")){
-      File f = SPIFFS.open("/test_superato.html", "r");
-      webServer.streamFile(f, "text/html");
-          f.close();
-  }
+      File paginaTestSuperato = SPIFFS.open("/test_superato.html", "r");
+      webServer.streamFile(paginaTestSuperato, "text/html");
+      paginaTestSuperato.close();
+    }
+         
+  
 
   else{
     Serial.println("File test_superato.html not found, falling back to default page");
-    testSuperatoHTML="<!DOCTYPE html><html><head><title>Disfida matematica</title></head><body><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
-                      "<h1>Complimenti, hai superato il test!</h1>"
-                      "<p>Tuttavia, almeno per il momento, questa rete non è in grado di fornire un servizio di connettività ad Internet. In futuro potrei esplorare la possibilità di un"
-                      "tunnel DNS, ma per ora ti dovrai accontentare della gloria e dell'onore di aver superato questo test. Complimenti ancora!</p></body></html>";
+    webServer.send(200, "text/html", testSuperatoHTML);
 
 
   }
   }
-  else webServer.send(200, "text/html", testFallitoHTML);
+  else{
+    if(SPIFFS.exists("/test_fallito.html")){
+      File paginaTestFallito = SPIFFS.open("/test_fallito.html", "r");
+      webServer.streamFile(paginaTestFallito, "text/html");
+      paginaTestFallito.close();
+    }
+    else webServer.send(200, "text/html", testFallitoHTML);
+  }
 }
 
 void radiceQuadrata(){
