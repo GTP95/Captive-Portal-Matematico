@@ -13,6 +13,7 @@ IPAddress         apIP(10, 10, 10, 1);    // Private network for server
 DNSServer         dnsServer;              // Create the DNS object
 ESP8266WebServer  webServer(80);          // HTTP server
 
+//Pagina di default contenente il test
 String testHTML = ""
                       "<!DOCTYPE html><html lang=\"it\"><head><title>Disfida matematica</title></head><body><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />"
                       "<h1>1=0!</h1><p>L'utilizzo di questa rete WiFi è concesso solo a chi dimostra di avere almeno una conoscenza basilare della Matematica. "
@@ -118,7 +119,11 @@ void setup() {
 
 webServer.on("/", []()
   {
-    webServer.send(200, "text/html", testHTML);
+    if(SPIFFS.exists("/index.html")){
+     File paginaTest=SPIFFS.open("/index.html","r");
+      webServer.streamFile(paginaTest, "text/html");
+    }
+    else webServer.send(200, "text/html", testHTML);
   });
   
   webServer.on("/calcola_punteggio", calcola_punteggio);  //specifico la funzione da chiamare corrispondente all'azione calcola_punteggio (evento pressione tasto "Invia risultati")
