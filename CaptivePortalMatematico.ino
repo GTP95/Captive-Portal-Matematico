@@ -3,6 +3,7 @@
    See Notes tab for original code references and compile requirements
 */
 
+//modifica per forzare sync
 #include <ESP8266WiFi.h>
 #include "./DNSServer.h"                  // Patched lib
 #include <ESP8266WebServer.h>
