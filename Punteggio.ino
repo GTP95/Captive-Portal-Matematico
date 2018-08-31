@@ -4,6 +4,7 @@
 int punteggioRadiceQuadrata, punteggioLogaritmo, punteggioFattoriale, punteggioPotenza, punteggioDerivata;  //qui non verrebbero inizializzati a 0
 void calcola_punteggio() {
 punteggioRadiceQuadrata=0, punteggioLogaritmo=0, punteggioFattoriale=0, punteggioPotenza=0, punteggioDerivata=0;
+File personeTrollate=(File)NULL;
   
 radiceQuadrata();
 logaritmo();
@@ -38,7 +39,8 @@ int punteggioTotale = punteggioRadiceQuadrata+punteggioLogaritmo+punteggioFattor
     }
     else webServer.send(200, "text/html", testFallitoHTML);
   }
-  contaPersoneTrollate();
+  if(personeTrollate==NULL) personeTrollate=SPIFFS.open("/personeTrollate","w");
+  contaPersoneTrollate(personeTrollate);
 }
 
 void radiceQuadrata(){
@@ -66,12 +68,9 @@ void derivata(){
   Serial.println(webServer.arg("risultato"));
 }
 
-void contaPersoneTrollate(){
-  if(SPIFFS.exists("/personeTrollate")){
-    File personeTrollate=SPIFFS.open("/personeTrollate", "a"); //non prevedo di trollare molte persone quindi mi limito ad appendere un carattere al file per ogni persona trollata che è più veloce che usare un contatore
-    personeTrollate.write(1);
-    personeTrollate.close();
-  }
+void contaPersoneTrollate(File file){ //flush&close?
+    file.write(1);
+    file.flush();
 }
 
 
