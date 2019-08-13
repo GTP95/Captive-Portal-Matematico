@@ -4,7 +4,7 @@
 int punteggioRadiceQuadrata, punteggioLogaritmo, punteggioFattoriale, punteggioPotenza, punteggioDerivata;  //qui non verrebbero inizializzati a 0
 void calcola_punteggio() {
 punteggioRadiceQuadrata=0, punteggioLogaritmo=0, punteggioFattoriale=0, punteggioPotenza=0, punteggioDerivata=0;
-File personeTrollate=(File)NULL;
+File punteggi=(File)NULL;
   
 radiceQuadrata();
 logaritmo();
@@ -39,8 +39,8 @@ int punteggioTotale = punteggioRadiceQuadrata+punteggioLogaritmo+punteggioFattor
     }
     else webServer.send(200, "text/html", testFallitoHTML);
   }
-  if(personeTrollate==NULL) personeTrollate=SPIFFS.open("/personeTrollate","w");
-  contaPersoneTrollate(personeTrollate);
+  if(punteggi==NULL) punteggi=SPIFFS.open("/punteggi","w");
+  registraPunteggio(punteggi, punteggioTotale);
 }
 
 void radiceQuadrata(){
@@ -68,10 +68,7 @@ void derivata(){
   Serial.println(webServer.arg("risultato"));
 }
 
-void contaPersoneTrollate(File file){ //flush&close?
-    file.write(1);
+void registraPunteggio(File file, int punteggio){ //flush&close?
+    file.write(punteggio);
     file.flush();
 }
-
-
-

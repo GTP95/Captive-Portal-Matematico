@@ -128,6 +128,14 @@ webServer.on("/", []()
   });
   
   webServer.on("/calcola_punteggio", calcola_punteggio);  //specifico la funzione da chiamare corrispondente all'azione calcola_punteggio (evento pressione tasto "Invia risultati")
+  webServer.on("/punteggi", []()
+    {
+      if(SPIFFS.exists("/punteggi")){
+        File paginaPunteggi=SPIFFS.open("/punteggi", "r");
+        webServer.streamFile(paginaPunteggi, "text/plain");
+      }
+      else webServer.send(404);
+    });
   
   yield();
   SPIFFS.begin();   //monto il filesystem
@@ -138,6 +146,3 @@ void loop() {
   dnsServer.processNextRequest();
   webServer.handleClient();
 }
-
-
-
