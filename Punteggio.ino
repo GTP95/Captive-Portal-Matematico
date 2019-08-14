@@ -1,21 +1,20 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
-int punteggioRadiceQuadrata, punteggioLogaritmo, punteggioFattoriale, punteggioPotenza, punteggioDerivata;  //qui non verrebbero inizializzati a 0
+int punteggioTotale;  //qui non verrebbe inizializzato a 0
 void calcola_punteggio() {
-punteggioRadiceQuadrata=0, punteggioLogaritmo=0, punteggioFattoriale=0, punteggioPotenza=0, punteggioDerivata=0;
-File punteggi=(File)NULL;
+  punteggioTotale=0;
+  File punteggi=(File)NULL;
   
-radiceQuadrata();
-logaritmo();
-fattoriale();
-potenza();
-derivata();
+  radiceQuadrata();
+  logaritmo();
+  fattoriale();
+  potenza();
+  derivata();
   
-int punteggioTotale = punteggioRadiceQuadrata+punteggioLogaritmo+punteggioFattoriale+punteggioPotenza+punteggioDerivata;
-  Serial.println("Punteggio totale: "+punteggioTotale);
+  Serial.print("Punteggio totale: ");
+  Serial.println(punteggioTotale);
   if(punteggioTotale>=3){
-    //
     if (SPIFFS.exists("/test_superato.html")){
       File paginaTestSuperato = SPIFFS.open("/test_superato.html", "r");
       webServer.streamFile(paginaTestSuperato, "text/html");
@@ -39,36 +38,33 @@ int punteggioTotale = punteggioRadiceQuadrata+punteggioLogaritmo+punteggioFattor
     }
     else webServer.send(200, "text/html", testFallitoHTML);
   }
-  if(punteggi==NULL) punteggi=SPIFFS.open("/punteggi","w");
+  if(punteggi==NULL) punteggi=SPIFFS.open("/punteggi","a");
   registraPunteggio(punteggi, punteggioTotale);
 }
 
 void radiceQuadrata(){
-  if(webServer.arg("radiecQuadrata").equals("corretto")) punteggioRadiceQuadrata=1;
-  Serial.println(webServer.arg("risultato"));
+  if(webServer.arg("radiceQuadrata").equals("corretto")) punteggioTotale++;
 }
 
 void logaritmo(){
-  if(webServer.arg("logaritmo").equals("corretto")) punteggioLogaritmo=1;
-  Serial.println(webServer.arg("risultato"));
+  if(webServer.arg("logaritmo").equals("corretto")) punteggioTotale++;
 }
 
 void fattoriale(){
-  if(webServer.arg("fattoriale").equals("corretto")) punteggioFattoriale=1;
-  Serial.println(webServer.arg("risultato"));
+  if(webServer.arg("fattoriale").equals("corretto")) punteggioTotale++;
 }
 
 void potenza(){
-  if(webServer.arg("potenza").equals("corretto")) punteggioPotenza=1;
-  Serial.println(webServer.arg("risultato"));
+  if(webServer.arg("potenza").equals("corretto")) punteggioTotale++;
+
 }
 
 void derivata(){
-  if(webServer.arg("derivata").equals("corretto")) punteggioDerivata=1;
-  Serial.println(webServer.arg("risultato"));
+  if(webServer.arg("derivata").equals("corretto")) punteggioTotale++;
+  
 }
 
 void registraPunteggio(File file, int punteggio){ //flush&close?
-    file.write(punteggio);
+    file.print(punteggio);
     file.flush();
 }
