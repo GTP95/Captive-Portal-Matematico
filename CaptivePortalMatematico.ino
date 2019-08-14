@@ -3,12 +3,13 @@
    See Notes tab for original code references and compile requirements
 */
 
-//modifica per forzare sync
+
 #include <ESP8266WiFi.h>
 #include "./DNSServer.h"                  // Patched lib
 #include <ESP8266WebServer.h>
 #include "FS.h"
 
+#define ACCESS_POINT_SSID "Disfida matematica"
 const byte        DNS_PORT = 53;          // Capture DNS requests on port 53
 IPAddress         apIP(10, 10, 10, 1);    // Private network for server
 DNSServer         dnsServer;              // Create the DNS object
@@ -105,7 +106,7 @@ String testFallitoHTML="<!DOCTYPE html><html><head><title>Disfida matematica</ti
 void setup() {
   WiFi.mode(WIFI_AP);
   WiFi.softAPConfig(apIP, apIP, IPAddress(255, 255, 255, 0));
-  WiFi.softAP("Disfida matematica");
+  WiFi.softAP(ACCESS_POINT_SSID);
 
   Serial.begin(115200); //serial debug
 
